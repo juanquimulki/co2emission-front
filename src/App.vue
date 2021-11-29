@@ -33,10 +33,14 @@
           <table>
             <thead>
               <tr>
-                <th scope="col" class="order" @click="sortByState()">State</th>
+                <th scope="col" class="order" @click="sortByState()">
+                  State (sortable)
+                </th>
                 <th scope="col">From</th>
                 <th scope="col">To</th>
-                <th scope="col" class="order" @click="sortByValue()">Value</th>
+                <th scope="col" class="order" @click="sortByValue()">
+                  Value (sortable)
+                </th>
                 <th scope="col">Options</th>
               </tr>
             </thead>
@@ -112,20 +116,18 @@ export default {
     async submit() {
       this.showOverlay = true;
       this.items = [];
-      await _axios.get(this.API_URL + "/state").then((response) => {
+      await _axios.get(`${this.API_URL}state`).then((response) => {
         this.states = response.data.result;
       });
 
-      for (var i = 1; i < 5 /*this.states.length*/; i++) {
+      for (var i = 1; i < this.states.length; i++) {
         await this.loadData(this.states[i]);
       }
       this.showOverlay = false;
     },
     async loadData(state) {
       await _axios
-        .get(
-          this.API_URL + "emission/" + state + "/" + this.from + "/" + this.to
-        )
+        .get(`${this.API_URL}emission/${state}/${this.from}/${this.to}`)
         .then((response) => {
           this.items.push(response.data.result[0]);
         });
@@ -168,14 +170,14 @@ export default {
         this.sortValue = "desc";
         this.items.sort(function (a, b) {
           var valueA = parseFloat(a.value);
-          var valueB= parseFloat(b.value);
+          var valueB = parseFloat(b.value);
           return valueA - valueB;
         });
       } else {
         this.sortValue = "asc";
         this.items.sort(function (a, b) {
           var valueA = parseFloat(a.value);
-          var valueB= parseFloat(b.value);
+          var valueB = parseFloat(b.value);
           return valueB - valueA;
         });
       }
