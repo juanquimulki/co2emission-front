@@ -33,18 +33,20 @@
           <table>
             <thead>
               <tr>
-                <th scope="col">State</th>
+                <th scope="col" class="order" @click="sortByState()">State</th>
                 <th scope="col">From</th>
                 <th scope="col">To</th>
-                <th scope="col">Value</th>
+                <th scope="col" class="order" @click="sortByValue()">Value</th>
+                <th scope="col">Options</th>
               </tr>
             </thead>
             <draggable v-model="items" tag="tbody">
               <tr v-for="item in items" :key="item.state">
                 <td scope="row">{{ item.state }}</td>
                 <td>{{ item.from }}</td>
-                <td>{{ item.to }}</td>                
+                <td>{{ item.to }}</td>
                 <td>{{ item.value }}</td>
+                <td><b-icon id="drag" icon="arrows-move"></b-icon></td>
               </tr>
             </draggable>
           </table>
@@ -58,7 +60,7 @@
 
 <script>
 import _axios from "../src/common/apiClient";
-import draggable from 'vuedraggable';
+import draggable from "vuedraggable";
 
 export default {
   name: "App",
@@ -83,6 +85,9 @@ export default {
       to: 0, //process.env.VUE_APP_YEAR_MAX,
       yearsFrom: [],
       yearsTo: [],
+
+      sortState: "asc",
+      sortValue: "desc",
     };
   },
   async created() {
@@ -111,7 +116,7 @@ export default {
         this.states = response.data.result;
       });
 
-      for (var i = 1; i < this.states.length; i++) {
+      for (var i = 1; i < 5 /*this.states.length*/; i++) {
         await this.loadData(this.states[i]);
       }
       this.showOverlay = false;
@@ -124,6 +129,56 @@ export default {
         .then((response) => {
           this.items.push(response.data.result[0]);
         });
+    },
+    sortByState() {
+      if (this.sortState == "asc") {
+        this.sortState = "desc";
+        this.items.sort(function (a, b) {
+          var nameA = a.state.toUpperCase(); // ignore upper and lowercase
+          var nameB = b.state.toUpperCase(); // ignore upper and lowercase
+          if (nameA > nameB) {
+            return -1;
+          }
+          if (nameA < nameB) {
+            return 1;
+          }
+
+          // names must be equal
+          return 0;
+        });
+      } else {
+        this.sortState = "asc";
+        this.items.sort(function (a, b) {
+          var nameA = a.state.toUpperCase(); // ignore upper and lowercase
+          var nameB = b.state.toUpperCase(); // ignore upper and lowercase
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+
+          // names must be equal
+          return 0;
+        });
+      }
+    },
+    sortByValue() {
+      if (this.sortValue == "asc") {
+        this.sortValue = "desc";
+        this.items.sort(function (a, b) {
+          var valueA = parseFloat(a.value);
+          var valueB= parseFloat(b.value);
+          return valueA - valueB;
+        });
+      } else {
+        this.sortValue = "asc";
+        this.items.sort(function (a, b) {
+          var valueA = parseFloat(a.value);
+          var valueB= parseFloat(b.value);
+          return valueB - valueA;
+        });
+      }
     },
   },
 };
@@ -163,5 +218,29 @@ body {
 
 select {
   padding: 5px;
+}
+
+table {
+  width: 100%;
+}
+
+table td {
+  padding: 10px;
+}
+
+table th {
+  padding: 10px;
+}
+
+table tr {
+  border-bottom: 1px solid lightgrey;
+}
+
+#drag {
+  cursor: move;
+}
+
+.order {
+  cursor: pointer;
 }
 </style>
