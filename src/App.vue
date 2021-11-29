@@ -45,9 +45,9 @@ export default {
   components: {},
   data() {
     return {
-      api_url: "http://localhost/co2emission-api/public/",
-      years_max: 2018,
-      years_min: 1980,
+      API_URL: "http://localhost/co2emission-api/public/",
+      YEARS_MAX: 2018,
+      YEARS_MIN: 1980,
 
       items: [],
       fields: [
@@ -72,22 +72,22 @@ export default {
   methods: {
     setUpYearsFrom() {
       this.yearsFrom = [];
-      for (var i = this.years_min; i <= this.years_max; i++) {
+      for (var i = this.YEARS_MIN; i <= this.YEARS_MAX; i++) {
         this.yearsFrom.push(i);
       }
-      this.from = this.years_min;
+      this.from = this.YEARS_MIN;
     },
     setUpYearsTo() {
       this.yearsTo = [];
-      for (var i = this.from; i <= this.years_max; i++) {
+      for (var i = this.from; i <= this.YEARS_MAX; i++) {
         this.yearsTo.push(i);
       }
-      this.to = this.years_max;
+      this.to = this.YEARS_MAX;
     },
     async submit() {
       this.showOverlay = true;
       this.items = [];
-      await _axios.get(this.api_url + "/state").then((response) => {
+      await _axios.get(this.API_URL + "/state").then((response) => {
         this.states = response.data.result;
       });
 
@@ -99,7 +99,7 @@ export default {
     async loadData(state) {
       await _axios
         .get(
-          this.api_url + "emission/" + state + "/" + this.from + "/" + this.to
+          this.API_URL + "emission/" + state + "/" + this.from + "/" + this.to
         )
         .then((response) => {
           this.items.push(response.data.result[0]);
@@ -134,6 +134,7 @@ body {
 
 .card {
   margin-bottom: 10px;
+  padding: 10px;
 }
 
 #submit {
