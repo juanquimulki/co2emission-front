@@ -30,7 +30,26 @@
 
       <b-overlay :show="showOverlay" rounded="sm">
         <b-card>
-          <b-table hover :items="items" :fields="fields"></b-table>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">State</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Value</th>
+              </tr>
+            </thead>
+            <draggable v-model="items" tag="tbody">
+              <tr v-for="item in items" :key="item.state">
+                <td scope="row">{{ item.state }}</td>
+                <td>{{ item.from }}</td>
+                <td>{{ item.to }}</td>                
+                <td>{{ item.value }}</td>
+              </tr>
+            </draggable>
+          </table>
+          <!-- <vue-good-table :columns="fields" :rows="items" :isDraggable="true"></vue-good-table> -->
+          <!-- <b-table hover :items="items" :fields="fields"></b-table> -->
         </b-card>
       </b-overlay>
     </div>
@@ -39,10 +58,11 @@
 
 <script>
 import _axios from "../src/common/apiClient";
+import draggable from 'vuedraggable';
 
 export default {
   name: "App",
-  components: {},
+  components: { draggable },
   data() {
     return {
       API_URL: "http://localhost/co2emission-api/public/",
@@ -51,10 +71,10 @@ export default {
 
       items: [],
       fields: [
-        { key: "state", label: "State", sortable: true },
-        { key: "from" },
-        { key: "to" },
-        { key: "value", sortable: true },
+        { field: "state", sortable: true },
+        { field: "from" },
+        { field: "to" },
+        { field: "value", sortable: true },
       ],
       showOverlay: false,
       states: [],
