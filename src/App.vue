@@ -25,7 +25,8 @@
               <b-button @click="submit" id="submit">Submit</b-button>
             </b-form-group>
           </b-col>
-        </b-row>
+        </b-row><br>
+        <b-progress v-if="showProgress" :value="valueProgress" :max="maxProgress" animated></b-progress>
       </b-card>
 
       <b-overlay :show="showOverlay" rounded="sm">
@@ -92,6 +93,10 @@ export default {
 
       sortState: "asc",
       sortValue: "desc",
+
+      showProgress: false,
+      valueProgress: 0,
+      maxProgress: 50,
     };
   },
   async created() {
@@ -115,6 +120,8 @@ export default {
     },
     async submit() {
       this.showOverlay = true;
+      this.valueProgress = 0;
+      this.showProgress = true;
       this.items = [];
       await _axios.get(`${this.API_URL}state`).then((response) => {
         this.states = response.data.result;
@@ -122,8 +129,10 @@ export default {
 
       for (var i = 1; i < this.states.length; i++) {
         await this.loadData(this.states[i]);
+        this.valueProgress++;
       }
       this.showOverlay = false;
+      this.showProgress = false;
     },
     async loadData(state) {
       await _axios
