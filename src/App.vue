@@ -8,17 +8,21 @@
         <b-row>
           <b-col md="1">
             <b-form-group label="From:">
-              <b-form-select v-model="from" :options="years"></b-form-select>
+              <b-form-select
+                v-model="from"
+                :options="yearsFrom"
+                @change="setUpYearsTo"
+              ></b-form-select>
             </b-form-group>
           </b-col>
           <b-col md="1">
             <b-form-group label="To:">
-              <b-form-select v-model="to" :options="years"></b-form-select>
+              <b-form-select v-model="to" :options="yearsTo"></b-form-select>
             </b-form-group>
           </b-col>
           <b-col md="1">
-            <b-form-group label="Options:">
-              <b-button @click="submit">Submit</b-button>
+            <b-form-group label="">
+              <b-button @click="submit" id="submit">Submit</b-button>
             </b-form-group>
           </b-col>
         </b-row>
@@ -42,6 +46,8 @@ export default {
   data() {
     return {
       api_url: "http://localhost/co2emission-api/public/",
+      years_max: 2018,
+      years_min: 1980,
 
       items: [],
       fields: [
@@ -53,28 +59,37 @@ export default {
       showOverlay: false,
       states: [],
 
-      from: 1980, //process.env.VUE_APP_YEAR_MIN,
-      to: 2018, //process.env.VUE_APP_YEAR_MAX,
-      years: [],
+      from: 0, //process.env.VUE_APP_YEAR_MIN,
+      to: 0, //process.env.VUE_APP_YEAR_MAX,
+      yearsFrom: [],
+      yearsTo: [],
     };
   },
   async created() {
-    this.setUpYears();
+    this.setUpYearsFrom();
+    this.setUpYearsTo();
   },
   methods: {
-    setUpYears() {
-      for (var i = this.from; i <= this.to; i++) {
-        this.years.push(i);
+    setUpYearsFrom() {
+      this.yearsFrom = [];
+      for (var i = this.years_min; i <= this.years_max; i++) {
+        this.yearsFrom.push(i);
       }
+      this.from = this.years_min;
+    },
+    setUpYearsTo() {
+      this.yearsTo = [];
+      for (var i = this.from; i <= this.years_max; i++) {
+        this.yearsTo.push(i);
+      }
+      this.to = this.years_max;
     },
     async submit() {
       this.showOverlay = true;
       this.items = [];
-      await _axios
-        .get(this.api_url + "/state")
-        .then((response) => {
-          this.states = response.data.result;
-        });
+      await _axios.get(this.api_url + "/state").then((response) => {
+        this.states = response.data.result;
+      });
 
       for (var i = 1; i < this.states.length; i++) {
         await this.loadData(this.states[i]);
@@ -84,12 +99,7 @@ export default {
     async loadData(state) {
       await _axios
         .get(
-          this.api_url + "emission/" +
-            state +
-            "/" +
-            this.from +
-            "/" +
-            this.to
+          this.api_url + "emission/" + state + "/" + this.from + "/" + this.to
         )
         .then((response) => {
           this.items.push(response.data.result[0]);
@@ -124,5 +134,13 @@ body {
 
 .card {
   margin-bottom: 10px;
+}
+
+#submit {
+  margin-top: 30px;
+}
+
+select {
+  padding: 5px;
 }
 </style>
