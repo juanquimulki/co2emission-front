@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <b-navbar>
-      <b-navbar-brand>CO2 Emissions</b-navbar-brand>
+      <b-navbar-brand data-testid="app-title">CO2 Emissions</b-navbar-brand>
     </b-navbar>
     <div class="content">
       <b-card>
