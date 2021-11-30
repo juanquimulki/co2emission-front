@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar>
+    <b-navbar fixed="top">
       <b-navbar-brand data-testid="app-title">CO2 Emissions</b-navbar-brand>
     </b-navbar>
     <div class="content">
@@ -227,21 +227,29 @@ export default {
 
 <style>
 body {
-  background-color: #ebefc9 !important;
+  background-color: #E7E7E7 !important;
 }
 
 .navbar {
-  padding-left: 10px;
+  padding-left: 55px;
+  height: 75px;
   background-color: #0b486b;
   box-shadow: 0 4px 10px #888888;
 }
 
 .navbar-brand {
   color: white !important;
+  font-weight: bold;
+  font-size: 19pt !important;
 }
 
 .content {
   padding: 50px;
+  margin-top: 60px;
+}
+
+.form {
+  position: fixed;
 }
 
 .sr-only {
