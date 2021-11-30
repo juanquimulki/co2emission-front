@@ -1,0 +1,13 @@
+table {
+    width: 100%;
+    font-family: arial;
+    border: 1px solid black;
+}
+
+table th {
+    border: 1px solid black;
+}
+
+.hiddenElement {
+    display: none;
+}

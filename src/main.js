@@ -18,6 +18,17 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 Vue.use(VueAxios, axios)
 
+// HTML to Paper
+const options = {
+  styles: ["./css/print.css"],
+};
+import VueHtmlToPaper from "vue-html-to-paper";
+Vue.use(VueHtmlToPaper, options);
+
+// Excel Export
+import excel from 'vue-excel-export' 
+Vue.use(excel)
+
 Vue.config.productionTip = false
 
 new Vue({

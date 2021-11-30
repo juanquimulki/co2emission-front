@@ -15,6 +15,8 @@
     "core-js": "^3.6.5",
     "vue": "^2.6.14",
     "vue-axios": "^3.4.0",
+    "vue-excel-export": "^0.1.3",
+    "vue-html-to-paper": "^1.4.4",
     "vuedraggable": "^2.24.3"
   },
   "devDependencies": {

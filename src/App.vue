@@ -20,43 +20,65 @@
               <b-form-select v-model="to" :options="yearsTo"></b-form-select>
             </b-form-group>
           </b-col>
-          <b-col md="1">
+          <b-col md="3">
             <b-form-group label="">
-              <b-button @click="submit" id="submit">Submit</b-button>
+              <b-button @click="submit" id="submit" title="Submit"
+                >Submit</b-button
+              >&nbsp;&nbsp;
+              <b-button @click="print" id="submit" title="Print" :disabled="btnDisabled"
+                ><b-icon icon="printer"></b-icon
+              ></b-button>
+
+              <export-excel
+                id="submit"
+                :data="items"
+                class="btn btn-default"
+                name="EmissionsReport.xls"
+                ><b-button title="Export" :disabled="btnDisabled"><b-icon icon="file-earmark-excel"></b-icon></b-button
+              ></export-excel>
             </b-form-group>
-          </b-col>
-        </b-row><br>
-        <b-progress v-if="showProgress" :value="valueProgress" :max="maxProgress" animated></b-progress>
+          </b-col> </b-row
+        ><br />
+        <b-progress
+          v-if="showProgress"
+          :value="valueProgress"
+          :max="maxProgress"
+          animated
+        ></b-progress>
       </b-card>
 
       <b-overlay :show="showOverlay" rounded="sm">
         <b-card>
-          <table>
-            <thead>
-              <tr>
-                <th scope="col" class="order" @click="sortByState()">
-                  State (sortable)
-                </th>
-                <th scope="col">From</th>
-                <th scope="col">To</th>
-                <th scope="col" class="order" @click="sortByValue()">
-                  Value (sortable)
-                </th>
-                <th scope="col">Options</th>
-              </tr>
-            </thead>
-            <draggable v-model="items" tag="tbody">
-              <tr v-for="item in items" :key="item.state">
-                <td scope="row">{{ item.state }}</td>
-                <td>{{ item.from }}</td>
-                <td>{{ item.to }}</td>
-                <td>{{ item.value }}</td>
-                <td><b-icon id="drag" icon="arrows-move"></b-icon></td>
-              </tr>
-            </draggable>
-          </table>
-          <!-- <vue-good-table :columns="fields" :rows="items" :isDraggable="true"></vue-good-table> -->
-          <!-- <b-table hover :items="items" :fields="fields"></b-table> -->
+          <div id="printMe">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col" class="order" @click="sortByState()">
+                    <b-icon icon="sort-up" class="hiddenElement"></b-icon
+                    >&nbsp;State (sortable)
+                  </th>
+                  <th scope="col">From</th>
+                  <th scope="col">To</th>
+                  <th scope="col" class="order" @click="sortByValue()">
+                    <b-icon icon="sort-up" class="hiddenElement"></b-icon
+                    >&nbsp;Value (sortable)
+                  </th>
+                  <th scope="col" class="hiddenElement">Options</th>
+                </tr>
+              </thead>
+              <draggable v-model="items" tag="tbody">
+                <tr v-for="item in items" :key="item.state">
+                  <td scope="row">{{ item.state }}</td>
+                  <td>{{ item.from }}</td>
+                  <td>{{ item.to }}</td>
+                  <td>{{ item.value }}</td>
+                  <td class="hiddenElement">
+                    <b-icon id="drag" icon="arrows-move"></b-icon>
+                  </td>
+                </tr>
+              </draggable>
+            </table>
+          </div>
         </b-card>
       </b-overlay>
     </div>
@@ -97,6 +119,8 @@ export default {
       showProgress: false,
       valueProgress: 0,
       maxProgress: 50,
+
+      btnDisabled: false,
     };
   },
   async created() {
@@ -122,17 +146,20 @@ export default {
       this.showOverlay = true;
       this.valueProgress = 0;
       this.showProgress = true;
+      this.btnDisabled = true;
       this.items = [];
       await _axios.get(`${this.API_URL}state`).then((response) => {
         this.states = response.data.result;
       });
 
       for (var i = 1; i < this.states.length; i++) {
+      //for (var i = 1; i < 5; i++) {
         await this.loadData(this.states[i]);
         this.valueProgress++;
       }
       this.showOverlay = false;
       this.showProgress = false;
+      this.btnDisabled = false;
     },
     async loadData(state) {
       await _axios
@@ -191,6 +218,9 @@ export default {
         });
       }
     },
+    print() {
+      this.$htmlToPaper("printMe");
+    },
   },
 };
 </script>
@@ -224,7 +254,7 @@ body {
 }
 
 #submit {
-  margin-top: 30px;
+  margin-top: 23px;
 }
 
 select {
